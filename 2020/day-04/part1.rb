@@ -1,7 +1,10 @@
 def process(data)
+  required_fields = %w(byr iyr eyr hgt hcl ecl pid)
+
   data.count do |d|
-    required_fields = %w(byr: iyr: eyr: hgt: hcl: ecl: pid:)
-    required_fields.all? { |f| d.include?(f) }
+    passport_fields = d.split(/[\n\s]+/).map { |p| p.split(':').first }
+
+    (required_fields - passport_fields).empty?
   end
 end
 

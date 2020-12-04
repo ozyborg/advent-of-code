@@ -1,12 +1,12 @@
 def process(data)
+  required_fields = %w(byr iyr eyr hgt hcl ecl pid)
+
   data.count do |d|
-    required_fields = %w(byr: iyr: eyr: hgt: hcl: ecl: pid:)
+    passport_fields = d.split(/[\n\s]+/).map { |p| p.split(':') }.to_h
 
-    next false unless required_fields.all? { |f| d.include?(f) }
+    next false unless (required_fields - passport_fields.keys).empty?
 
-    d.split(/[\n\s]+/).all? do |dd|
-      field, value = dd.split(':')
-
+    passport_fields.all? do |field, value|
       case field
       when 'byr'
         value.to_i >= 1920 && value.to_i <= 2002
@@ -28,8 +28,10 @@ def process(data)
         %w(amb blu brn gry grn hzl oth).include?(value)
       when 'pid'
         value.match(/^[0-9]{9}$/)
-      else
+      when 'cid'
         true
+      else
+        false
       end
     end
   end
