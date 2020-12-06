@@ -1,6 +1,6 @@
 def process(data)
   data.inject(0) do |sum, d|
-    sum + d.scan(/[a-z]/).uniq.size
+    sum + d.split("\n").map(&:chars).reduce(:|).size
   end
 end
 
