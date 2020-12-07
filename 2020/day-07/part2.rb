@@ -1,10 +1,10 @@
 def bag_count(data, current_bag)
-  bags = data[current_bag].split(/(\d+) (.+?) bags?/)
+  bags = data[current_bag]
 
-  return 1 if bags.size == 1
+  return 1 if bags.empty?
 
-  1 + (bags.size / 3).times.inject(0) do |sum, i|
-    sum + (bags[(i * 3) + 1].to_i * bag_count(data, bags[(i * 3) + 2]))
+  1 + bags.inject(0) do |sum, b|
+    sum + b[0].to_i * bag_count(data, b[1])
   end
 end
 
@@ -14,8 +14,10 @@ end
 
 def input
   File.readlines('./input.txt').map do |line|
-    line.match(/(.*) bags contain (.*)./).to_a[1..-1]
-  end.to_h
+    line.scan(/(.*) bags contain (.*)./).flatten
+  end.to_h.transform_values do |v|
+    v.scan(/(\d+) (.+?) bags?/).flatten(0)
+  end
 end
 
 puts process(input)
