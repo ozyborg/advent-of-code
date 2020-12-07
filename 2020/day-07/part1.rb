@@ -1,8 +1,6 @@
 def contains_bag?(data, current_bag, search_bag)
   bags = data[current_bag]
 
-  return false if bags.empty?
-
   return true if bags.include?(search_bag)
 
   bags.any? do |b|

@@ -1,8 +1,6 @@
 def bag_count(data, current_bag)
   bags = data[current_bag]
 
-  return 1 if bags.empty?
-
   1 + bags.inject(0) do |sum, b|
     sum + b[0].to_i * bag_count(data, b[1])
   end
