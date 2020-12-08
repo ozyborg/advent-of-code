@@ -18,11 +18,13 @@ def process(data)
     opcode, arg = data[pointer].split(' ')
     arg = arg.to_i
 
-    if (opcode == 'nop' || opcode == 'jmp') && !changed.include?(pointer) && can_change
-      opcode = 'jmp' if opcode == 'nop'
-      opcode = 'nop' if opcode == 'jmp'
-      changed << pointer
-      can_change = false
+    if (opcode == 'nop' || opcode == 'jmp')
+      if changed.none?(pointer) && can_change
+        opcode = 'jmp' if opcode == 'nop'
+        opcode = 'nop' if opcode == 'jmp'
+        changed << pointer
+        can_change = false
+      end
     end
 
     history << pointer
