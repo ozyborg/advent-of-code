@@ -2,7 +2,7 @@ def process(data)
   n = 552655238
 
   p = 0
-  cons = 2
+  cons = 1
 
   loop do
     ns = data[p..p+cons]
@@ -10,7 +10,7 @@ def process(data)
     break ns.min + ns.max if ns.sum == n
 
     if ns.sum > n
-      cons = 2
+      cons = 1
       p += 1
     else
       cons += 1
