@@ -33,7 +33,7 @@ def process(data)
             b
           end
         end
-        mem[possible_pos] = val
+        mem[possible_pos.join.to_i(2)] = val
       end
     end
   end
