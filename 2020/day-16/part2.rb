@@ -30,14 +30,11 @@ def process(data)
     end.map { |r| r[:field] }
   end
 
-  indexed_fields = fields.map.with_index { |f, i| [i, f] }.sort { |x, y| x[1].size <=> y[1].size }
+  indexed_fields = fields.map.with_index { |f, i| [i, f] }.sort { |x, y| x[1].size <=> y[1].size }.to_h
 
-  fields.size.times do |i|
-    current = indexed_fields[i][1]
-    (i+1..fields.size-1).each do |j|
-      indexed_fields[j][1] -= current
-    end
-    indexed_fields[i][1] = indexed_fields[i][1][0]
+  indexed_fields = indexed_fields.map do |k, v|
+    indexed_fields.transform_values! { |vv| vv - v }
+    [k, v.first]
   end
 
   departure_fields = indexed_fields.to_h.select { |k, v| v.include?('departure') }.keys
