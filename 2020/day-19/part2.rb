@@ -40,9 +40,11 @@ def process(data)
     [n, paths]
   end.to_h
 
-  # This trick does not work :(
-  rules['8'] = (1..50).map { |i| ['42'] * i }.reverse
-  rules['11'] = (1..50).map { |i| (['42'] * i) + (['31'] * i) }.reverse
+  rules['0'] = (1..5).map do |i|
+    (1..5).map do |j|
+      ['42'] * j + ['42'] * i + ['31'] * i
+    end.flatten(0)
+  end.flatten(1).reverse
 
   messages.count { |m| consume(m.chars, rules, '0').empty? }
 end
