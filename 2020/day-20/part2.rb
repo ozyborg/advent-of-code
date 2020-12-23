@@ -1,106 +1,90 @@
-def possible_edges(tile)
-  [
+def edges(tile)
+  edges = [
     tile.first,
     tile.map { |xs| xs.last },
     tile.last,
     tile.map { |xs| xs.first }
   ].map(&:join)
-   .map { |edge| [edge, edge.reverse] }
-   .flatten(1)
+
+  edges + edges.map(&:reverse)
 end
 
-def transform_tile(tile, rotate, flip)
-  next_tile = tile
-
-  rotate.times do
-    next_tile = next_tile.transpose.map(&:reverse)
-  end
-
-  next_tile = next_tile.map(&:reverse) if flip
-
-  next_tile
+def rotate(tile, r)
+  r.times { tile = tile.transpose.map(&:reverse) } and tile
 end
 
-def align_tile(tile, top)
-  position = tile[:possible_edges].index(top)
+def flip(tile)
+  tile.map(&:reverse)
+end
 
-  transform_tile(tile[:tile], (4 - position / 2) % 4, [1, 3, 4, 6].include?(position))
+def align(tile, top)
+  top_pos = edges(tile).index(top)
+
+  tile = rotate(tile, 4 - top_pos % 4)
+  tile = flip(tile) if [2, 3, 4, 5].include?(top_pos)
+
+  tile
 end
 
 def process(data)
-  tiles = {}
-
-  data.each do |d|
+  tiles = data.map do |d|
     id, tile = d.split(":\n")
-
     id = id.split('Tile ').last.to_i
-
     tile = tile.split("\n").map { |xs| xs.chars }
 
-    tiles[id] = {
-      id: id,
-      tile: tile,
-      possible_edges: possible_edges(tile)
-    }
-  end
+    [id, { id: id, tile: tile, edges: edges(tile) }]
+  end.to_h
 
-  corners = tiles.select do |k0, t0|
-    tiles.count { |k1, t1| (t0[:possible_edges] - t1[:possible_edges]).size == 6 } == 2
+  outer_edges = []
+
+  tiles.each do |k0, t0|
+    t_edges = t0[:edges]
+
+    tiles.each do |k1, t1|
+      next if k0 == k1
+      t_edges -= t1[:edges]
+      next if t_edges.empty?
+    end
+
+    outer_edges += t_edges
   end
 
   grid = {}
 
-  grid[[0, 0]] = corners.first[1]
+  grid[[0, 0]] = tiles.find { |k, t| (t[:edges] & outer_edges).size == 4 }.last
 
   grid_size = Math.sqrt(data.size).to_i
-
-  all_possible_edges = tiles.transform_values { |v| v[:possible_edges] }.to_h
 
   grid_size.times do |x|
     grid_size.times do |y|
       tiles.delete(grid[[x, y]][:id])
 
-      top_edge = nil
-      if x == 0
-        unique_edges = grid[[x, y]][:possible_edges].select do |p_edge|
-          all_possible_edges.none? { |k, edges| k != grid[[x, y]][:id] && edges.include?(p_edge) }
-        end
-        if y == 0
-          tile = align_tile(grid[[x, y]], unique_edges[0])
-          if unique_edges.include?(possible_edges(tile)[6])
-            top_edge = unique_edges[0]
-          else
-            top_edge = unique_edges[1]
-          end
-        elsif y == 11
-          unique_edges.size.times.each do |i|
-            tile = align_tile(grid[[x, y]], unique_edges[i])
-            if grid[[x, y - 1]][:possible_edges][2] == possible_edges(tile)[6]
-              top_edge = unique_edges[i]
-              break
-            end
-          end
+      corner_edges = grid[[x, y]][:edges] & outer_edges
+
+      top_edge = if x == 0
+        left_edges = if y == 0
+          corner_edges
         else
-          top_edge = unique_edges.first
+          [grid[[x, y - 1]][:edges][1]]
+        end
+
+        corner_edges.find do |c|
+          tile = align(grid[[x, y]][:tile], c)
+          left_edges.include?(edges(tile)[3])
         end
       else
-        top_edge = grid[[x - 1, y]][:possible_edges][4]
+        grid[[x - 1, y]][:edges][2]
       end
 
-      grid[[x, y]][:tile] = align_tile(grid[[x, y]], top_edge)
-      grid[[x, y]][:possible_edges] = possible_edges(grid[[x, y]][:tile])
-
-      if y > 0 && grid[[x, y]][:possible_edges][6] != grid[[x, y - 1]][:possible_edges][2]
-        grid[[x, y]][:tile] = transform_tile(grid[[x, y]][:tile], 0, true)
-        grid[[x, y]][:possible_edges] = possible_edges(grid[[x, y]][:tile])
-      end
+      grid[[x, y]][:tile] = align(grid[[x, y]][:tile], top_edge)
+      grid[[x, y]][:edges] = edges(grid[[x, y]][:tile])
 
       tiles.each do |id, t|
-        if t[:possible_edges].include?(grid[[x, y]][:possible_edges][2])
+        if t[:edges].include?(grid[[x, y]][:edges][1])
           grid[[x, y + 1]] = t
         end
 
-        if t[:possible_edges].include?(grid[[x, y]][:possible_edges][4])
+        if t[:edges].include?(grid[[x, y]][:edges][2])
           grid[[x + 1, y]] = t
         end
 
@@ -116,31 +100,28 @@ def process(data)
   end
 
   sea_monster = [
-    '                  # '.chars.map.with_index { |ch, i| ch == '#' ? i : nil }.compact,
-    '#    ##    ##    ###'.chars.map.with_index { |ch, i| ch == '#' ? i : nil }.compact,
-    ' #  #  #  #  #  #   '.chars.map.with_index { |ch, i| ch == '#' ? i : nil }.compact
+    '                  # ',
+    '#    ##    ##    ###',
+    ' #  #  #  #  #  #   '
   ]
-  sea_monster_row_size = '                  # '.length
+  sm_cols = sea_monster.first.size
+  sm_rows = sea_monster.size
+  sm_count = sea_monster.join.count('#')
+  sm_regexp = Regexp.new(sea_monster.join.gsub(' ', '.'))
 
   (0..3).to_a.product([true, false]) do |rotate, flip|
-    version = transform_tile(image, rotate, flip)
+    version = rotate(image, rotate)
+    version = flip(version) if flip
 
     hash_count = 0
-    offset = version.first.size - sea_monster_row_size
 
-    version.each_cons(sea_monster.size) do |rows|
-      offset.times do |i|
-        contains = rows.map { |row| row.drop(i) }
-                       .map.with_index do |row, row_i|
-                         sea_monster[row_i].all? { |s| row[s] == '#' }
-                       end.all?
-        hash_count += sea_monster.flatten(1).size if contains
+    version.each_cons(sm_rows) do |rows|
+      rows.map { |r| r.each_cons(sm_cols).to_a }.transpose.each do |sm|
+        hash_count += sm_count if sm.join.match(sm_regexp)
       end
     end
 
-    if hash_count > 0
-      return image.join.count('#') - hash_count
-    end
+    return image.join.count('#') - hash_count if hash_count > 0
   end
 end
 
