@@ -9,5 +9,5 @@ def input
   File.readlines(ARGV.first)
 end
 
-puts process input
+puts process(input)
 
