@@ -10,5 +10,5 @@ def input
       .map { |line| line.map(&:to_i) }
 end
 
-puts process input
+puts process(input)
 
