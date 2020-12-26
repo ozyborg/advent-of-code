@@ -26,5 +26,5 @@ def input
   end
 end
 
-puts process input
+puts process(input)
 
