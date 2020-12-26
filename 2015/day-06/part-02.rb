@@ -4,16 +4,15 @@ def process(data)
   data.each do |d|
     (d[1]..d[3]).each do |x|
       (d[2]..d[4]).each do |y|
-         case d[0]
-         when 'turn on'
-           lights[[x, y]] = lights.fetch([x, y], 0) + 1
-         when 'turn off'
-           lights[[x, y]] = lights.fetch([x, y], 0) - 1
-           lights[[x, y]] = 0 if lights[[x, y]].negative?
-         when 'toggle'
-           lights[[x, y]] = lights.fetch([x, y], 0) + 2
-         else
-         end
+        case d[0]
+        when 'turn on'
+          lights[[x, y]] = lights.fetch([x, y], 0) + 1
+        when 'turn off'
+          lights[[x, y]] = lights.fetch([x, y], 0) - 1
+          lights[[x, y]] = 0 if lights[[x, y]].negative?
+        when 'toggle'
+          lights[[x, y]] = lights.fetch([x, y], 0) + 2
+        end
       end
     end
   end
