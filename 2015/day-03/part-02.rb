@@ -27,5 +27,5 @@ def input
   File.read(ARGV.first).chomp.chars
 end
 
-puts process input
+puts process(input)
 
