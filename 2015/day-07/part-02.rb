@@ -9,7 +9,7 @@ def signal(conf, wire)
     when 1
       signal(conf, instruction[0])
     when 2
-      65536 + ~signal(conf, instruction[1])
+      ~signal(conf, instruction[1])
     when 3
       case instruction[1]
       when 'AND'
