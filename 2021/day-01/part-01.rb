@@ -1,5 +1,5 @@
 def process(data)
-  data.each_cons(2).count { |d| (d[1] - d[0]).positive? }
+  data.each_cons(2).count { |d1, d2| d2 > d1 }
 end
 
 def input
