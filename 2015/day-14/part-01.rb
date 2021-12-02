@@ -3,7 +3,6 @@ def process(data)
 
   seqs = data.map do |d|
     Enumerator.new do |y|
-
       position = 0
 
       loop do
