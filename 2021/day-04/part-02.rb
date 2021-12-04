@@ -7,10 +7,8 @@ def process(data)
   data[:numbers].size.times do |i|
     subset = data[:numbers].first(i + 1)
 
-    sub_winners = row_board_map.filter { |k, v| !winners.include?(v) && (k - subset).empty? }.map(&:last)
-    sub_winners += col_board_map.filter { |k, v| !winners.include?(v) && (k - subset).empty? }.map(&:last)
-
-    winners += sub_winners.uniq
+    winners |= row_board_map.filter { |k, v| !winners.include?(v) && (k - subset).empty? }.map(&:last)
+    winners |= col_board_map.filter { |k, v| !winners.include?(v) && (k - subset).empty? }.map(&:last)
 
     break (data[:boards][winners.last].flatten - subset).sum * subset.last if winners.size == data[:boards].size
   end
