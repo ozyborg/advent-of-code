@@ -1,22 +1,18 @@
 def process(data)
-  points = []
-
-  data.each do |d|
+  points = data.inject([]) do |acc, d|
     x1, y1, x2, y2 = d
 
     delta = [x2 <=> x1, y2 <=> y1]
 
-    next unless delta.include?(0)
+    next acc unless delta.include?(0)
 
-    current = [x1, y1]
+    sub_points = [[x1, y1]]
 
-    loop do
-      points << current
-      current = [current, delta].transpose.map(&:sum)
-      break if current == [x2, y2]
+    while(sub_points.last != [x2, y2])
+      sub_points << [sub_points.last, delta].transpose.map(&:sum)
     end
 
-    points << [x2, y2]
+    acc + sub_points
   end
 
   points.tally.count { |k, v| v > 1 }
@@ -24,8 +20,8 @@ end
 
 def input
   File.read(ARGV.first)
-       .scan(/(\d+),(\d+) -> (\d+),(\d+)\n?/)
-       .map { |l| l.map(&:to_i) }
+      .scan(/(\d+),(\d+) -> (\d+),(\d+)\n?/)
+      .map { |l| l.map(&:to_i) }
 end
 
-p process(input)
+puts process(input)
