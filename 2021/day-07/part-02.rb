@@ -1,5 +1,5 @@
 def process(data)
-  data.map do |d|
+  (data.min..data.max).map do |d|
     data.sum do |dd|
       x = (d - dd).abs
       x * (x + 1) / 2

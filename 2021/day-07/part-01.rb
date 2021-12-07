@@ -1,5 +1,5 @@
 def process(data)
-  data.map { |d| data.sum { |dd| (d - dd).abs } }.min
+  (data.min..data.max).map { |d| data.sum { |dd| (d - dd).abs } }.min
 end
 
 def input
