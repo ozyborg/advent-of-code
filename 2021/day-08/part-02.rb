@@ -1,24 +1,21 @@
 def process(data)
-  digits = ['abcefg', 'cf', 'acdeg', 'acdfg', 'bcdf', 'abdfg', 'abdefg', 'acf', 'abcdefg', 'abcdfg']
-
-  by_occurence = digits.flat_map(&:chars).tally
-  by_size = digits.map(&:size)
-
   data.sum do |d|
-    by_occurence_sub = d[0].flat_map(&:chars).tally
-    by_size_sub = d[0].map { |x| [x.chars, x.size] }
+    chars_map = d[0].map { |dg| dg.chars.sort }
 
-    mapping = {}
-    mapping['f'] = by_size_sub.find { |k, v| v == 2 }[0].find { |v| v == by_occurence_sub.find { |k, v| v == 9 }[0] }
-    mapping['c'] = (by_size_sub.find { |k, v| v == 2 }[0] - [mapping['f']])[0]
-    mapping['a'] = (by_size_sub.find { |k, v| v == 3 }[0] - [mapping['f'], mapping['c']])[0]
-    mapping['e'] = by_occurence_sub.find { |k, v| v == 4 }[0]
-    mapping['b'] = by_occurence_sub.find { |k, v| v == 6 }[0]
-    mapping['d'] = (by_size_sub.find { |k, v| v == 4 }[0] - [mapping['b'], mapping['c'], mapping['f']])[0]
-    mapping['g'] = (digits[8].chars - mapping.values)[0]
-    mapping = mapping.invert
+    mapped_digits = {}
 
-    d[1].map { |dg| digits.index(dg.chars.map { |c| mapping[c] }.sort.join) }.join.to_i
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 2 })] = 1
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 3 })] = 7
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 4 })] = 4
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 7 })] = 8
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 6 && (mapped_digits.key(4) - c).empty? })] = 9
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 6 && (mapped_digits.key(7) - c).empty? })] = 0
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 6 })] = 6
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 5 && (mapped_digits.key(7) - c).empty? })] = 3
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 5 && (c - mapped_digits.key(6)).empty? })] = 5
+    mapped_digits[chars_map.delete(chars_map.find { |c| c.size == 5 })] = 2
+
+    d[1].map { |dg| mapped_digits[dg.chars.sort] }.join.to_i
   end
 end
 
