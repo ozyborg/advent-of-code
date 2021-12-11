@@ -2,12 +2,12 @@ def process(data)
   counter = 0
 
   100.times do
-    next_data = data.transform_values(&:next)
+    data.transform_values!(&:next)
 
     flashed = {}
 
     loop do
-      flashes = next_data.filter { |k, v| v > 9 }
+      flashes = data.filter { |k, v| v > 9 }
 
       break if flashes.empty?
 
@@ -16,7 +16,7 @@ def process(data)
       flashes.each do |k, v|
         counter = counter.next
 
-        next_data[k] = 0
+        data[k] = 0
 
         x, y = k
 
@@ -27,12 +27,10 @@ def process(data)
         ]
 
         adjs.each do |a|
-          next_data[a] = next_data[a].next if next_data.key?(a) && !flashed.key?(a)
+          data[a] = data[a].next if data.key?(a) && !flashed.key?(a)
         end
       end
     end
-
-    data = next_data
   end
 
   counter
