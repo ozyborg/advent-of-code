@@ -2,17 +2,14 @@ def count(adjs, current, history)
   return 1 if current == 'end'
 
   adjs[current].sum do |adj|
-    next 0 if adj == 'start'
-    next 0 if adj == 'end' && history['end']
-
-    visited = false
-
-    if adj.downcase == adj && history[adj]
-      next 0 if history.values.include?('VISITED')
-      visited = true
+    if history[adj]
+      next 0 if adj == 'start' || adj == 'end'
+      next 0 if adj.downcase == adj && history.values.include?('X')
     end
 
-    count(adjs, adj, history.merge({ adj => visited ? 'VISITED' : true }))
+    value = adj.downcase == adj && history[adj] ? 'X' : true
+
+    count(adjs, adj, history.merge({ adj => value }))
   end
 end
 
