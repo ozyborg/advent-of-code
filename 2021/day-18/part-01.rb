@@ -29,7 +29,7 @@ def reduce(depths)
         depths.delete_at(i)
         depths.insert(i, [0, depth - 1])
 
-        i = 0
+        i = i - 1
       else
         i += 1
       end
@@ -46,7 +46,7 @@ def reduce(depths)
         depths.insert(i, [(e / 2.0).ceil, d + 1])
         depths.insert(i, [(e / 2.0).floor, d + 1])
 
-        break i = 0
+        break
       else
         i += 1     
       end
