@@ -92,7 +92,7 @@ def process(data)
 end
 
 def input
-  File.readlines(ARGV.first).map(&:chomp)
+  File.readlines(ARGV.first)
 end
 
 puts process(input)
