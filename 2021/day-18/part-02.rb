@@ -76,7 +76,7 @@ def calculate_magnitude(depths)
 end
 
 def process(data)
-  data.combination(2).map do |d1, d2|
+  data.permutation(2).map do |d1, d2|
     depths = calculate_depths(d1) + calculate_depths(d2)
     depths.map! { |e, d| [e, d + 1] }
     calculate_magnitude(reduce(depths))
