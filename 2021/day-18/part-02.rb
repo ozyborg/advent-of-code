@@ -2,7 +2,7 @@ def calculate_depths(array)
   depths = []
   stack = []
 
-  array.to_s.chars.each do |c|
+  array.chars.each do |c|
     stack.push(c) if c == '['
     depths << [c.to_i, stack.size] if c.to_i.to_s == c
     stack.pop if c == ']'
@@ -84,7 +84,7 @@ def process(data)
 end
 
 def input
-  File.readlines(ARGV.first).map { |l| eval(l.chomp) }
+  File.readlines(ARGV.first).map(&:chomp)
 end
 
 puts process(input)
