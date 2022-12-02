@@ -27,11 +27,11 @@ def score_mapper
 end
 
 def part_2(data)
-  data.map { |d| score[score_mapper[d]] }.sum
+  data.sum { |d| score[score_mapper[d]] }
 end
 
 def part_1(data)
-  data.map { |d| score[d] }.sum
+  data.sum { |d| score[d] }
 end
 
 def input
