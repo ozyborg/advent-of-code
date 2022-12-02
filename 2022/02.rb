@@ -1,14 +1,14 @@
 def score
   {
-    "A X" => 3,
-    "A Y" => 6,
-    "A Z" => 0,
-    "B X" => 0,
-    "B Y" => 3,
-    "B Z" => 6,
-    "C X" => 6,
-    "C Y" => 0,
-    "C Z" => 3,
+    "A X" => 4,
+    "A Y" => 8,
+    "A Z" => 3,
+    "B X" => 1,
+    "B Y" => 5,
+    "B Z" => 9,
+    "C X" => 7,
+    "C Y" => 2,
+    "C Z" => 6,
   }
 end
 
@@ -26,20 +26,12 @@ def score_mapper
   }
 end
 
-def value
-  {
-    "X" => 1,
-    "Y" => 2,
-    "Z" => 3
-  }
-end
-
 def part_2(data)
-  data.map { |d| score[score_mapper[d]] + value[score_mapper[d][-1]] }.sum
+  data.map { |d| score[score_mapper[d]] }.sum
 end
 
 def part_1(data)
-  data.map { |d| score[d] + value[d[-1]] }.sum
+  data.map { |d| score[d] }.sum
 end
 
 def input
