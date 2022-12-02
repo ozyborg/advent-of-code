@@ -1,4 +1,8 @@
-def process(data)
+def part_2(data)
+  data.map(&:sum).sort.last(3).sum
+end
+
+def part_1(data)
   data.map(&:sum).max
 end
 
@@ -8,4 +12,5 @@ def input
       .map { |g| g.split("\n").map(&:to_i) }
 end
 
-puts process(input)
+puts part_1(input)
+puts part_2(input)
