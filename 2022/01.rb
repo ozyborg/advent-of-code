@@ -7,7 +7,7 @@ def part_1(data)
 end
 
 def input
-  File.read(ARGV.first)
+  File.read('./inputs/01.txt')
       .split("\n\n")
       .map { |g| g.split("\n").map(&:to_i) }
 end

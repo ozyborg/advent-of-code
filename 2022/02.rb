@@ -35,7 +35,7 @@ def part_1(data)
 end
 
 def input
-  File.read(ARGV.first).split("\n")
+  File.read('./inputs/02.txt').split("\n")
 end
 
 puts part_1(input)
