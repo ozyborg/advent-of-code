@@ -16,9 +16,9 @@ def step(state, dir)
 
     if d_0.abs > 1 || d_1.abs > 1
       if d_0 == 0
-        state[i][1] += d_1 / 2
+        state[i][1] += d_1 <=> 0
       elsif d_1 == 0
-        state[i][0] += d_0 / 2
+        state[i][0] += d_0 <=> 0
       else
         state[i][0] += d_0 <=> 0
         state[i][1] += d_1 <=> 0
