@@ -1,17 +1,17 @@
 def part_2(data)
   x = 1
-  cycle = 1
+  cycle = 0
 
   pixels = Array.new(6 * 40) { '.' }
 
   data.each do |cmd, p1|
-    pixels[cycle - 1] = '#' if (x - 1..x + 1).include?(cycle % 40 - 1)
+    pixels[cycle] = '#' if (x - 1..x + 1).include?(cycle % 40)
     case cmd
     when 'noop'
       cycle += 1
     when 'addx'
       cycle += 1
-      pixels[cycle - 1] = '#' if (x - 1..x + 1).include?(cycle % 40 - 1)
+      pixels[cycle] = '#' if (x - 1..x + 1).include?(cycle % 40)
       cycle += 1
       x += p1.to_i
     end
