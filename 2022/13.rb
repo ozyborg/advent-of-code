@@ -8,7 +8,7 @@ def compare(a, b)
     compare(a[i], b[i]).tap { |cmp| return cmp if cmp != 0 }
   end
 
-  a.length <=> b.length
+  a.size <=> b.size
 end
 
 def part_2(data)
