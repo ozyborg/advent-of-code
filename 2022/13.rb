@@ -1,22 +1,17 @@
 def compare(a, b)
-  if a.is_a?(Integer) && b.is_a?(Integer)
-    a <=> b
-  elsif a.is_a?(Array) && b.is_a?(Array)
-    a.zip(b).each do |ab|
-      next if ab.include?(nil)
-      cmp = compare(*ab)
-      return cmp if cmp != 0
-    end
+  return a <=> b if a.is_a?(Integer) && b.is_a?(Integer)
 
-    a.length <=> b.length
-  else
-    compare([a].flatten(1), [b].flatten(1))
+  a = [a] if a.is_a?(Integer)
+  b = [b] if b.is_a?(Integer)
+
+  [a.size, b.size].min.times do |i|
+    compare(a[i], b[i]).tap { |cmp| return cmp if cmp != 0 }
   end
+
+  a.length <=> b.length
 end
 
 def part_2(data)
-  data = data.split("\n").map { |d| eval(d) }.compact
-
   data << [[2]]
   data << [[6]]
 
@@ -26,19 +21,13 @@ def part_2(data)
 end
 
 def part_1(data)
-  data = data.split("\n\n").map do |ab|
-    a, b = ab.split("\n")
-
-    [eval(a), eval(b)]
-  end
-
-  data.map.with_index do |ab, i|
-    compare(*ab) == -1 ? i + 1 : 0
+  data.each_slice(2).map.with_index do |(a, b), i|
+    compare(a, b) < 0 ? i + 1 : 0
   end.sum
 end
 
 def input
-  File.read('./inputs/13.txt')
+  File.read('./inputs/13.txt').split("\n").map { |d| eval(d) }.compact
 end
 
 puts part_1(input)
