@@ -17,7 +17,6 @@ def part_2(data)
   map = build_map(data)
 
   floor = map.keys.map(&:last).max + 2
-  sands = 0
 
   loop do
     sand = [500, 0]
@@ -39,19 +38,17 @@ def part_2(data)
     end
 
     map[sand] = 'o'
-    sands += 1
 
     break if sand == [500, 0]
   end
 
-  sands
+  map.values.count('o')
 end
 
 def part_1(data)
   map = build_map(data)
 
-  abyss = map.keys.map(&:last).max
-  sands = 0
+  abyss = map.keys.map(&:last).max + 1
 
   loop do
     sand = [500, 0]
@@ -69,16 +66,15 @@ def part_1(data)
         break
       end
 
-      break if sand[1] > abyss
+      break if sand[1] == abyss
     end
 
-    break if sand[1] > abyss
+    break if sand[1] == abyss
 
     map[sand] = 'o'
-    sands += 1
   end
 
-  sands
+  map.values.count('o')
 end
 
 def input
