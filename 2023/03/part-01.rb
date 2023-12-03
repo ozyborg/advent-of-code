@@ -9,38 +9,28 @@ class Puzzle
     end.to_h
   end
 
-  def is_digit?(v)
-    ('0'..'9').include?(v)
-  end
-
   def solve
-    part_numbers = []
+    data.reject! { |xy, v| v == '.' }
 
-    data.each do |xy, v|
-      x, y = xy
+    numbers = data.select { |xy, v| ('0'..'9').include?(v) }.keys
+    symbols = data.reject { |xy, v| ('0'..'9').include?(v) }.keys
 
-      next unless is_digit?(v)
-      next if is_digit?(data[[x - 1, y]])
-
-      x_min = x - 1
-      x_max = x + 1
-
-      (x..).each do |i|
-        break unless is_digit?(data[[i, y]])
-
-        x_max = i + 1
-      end
-
-      adjs = [data[[x_min, y]], data[[x_max, y]]]
-      adjs += (x_min..x_max).map { |i| data[[i, y - 1]] }
-      adjs += (x_min..x_max).map { |i| data[[i, y + 1]] }
-
-      next if adjs.compact.all? { |v| v == '.' || is_digit?(v) }
-
-      part_numbers << (x_min + 1..x_max - 1).map { |i| data[[i, y]] }.join.to_i
+    number_map = numbers.reduce({}) do |acc, (x, y)|
+      acc.merge([x, y] => acc[[x - 1, y]] || [x, y])
     end
 
-    part_numbers.sum
+    symbol_numbers = symbols.reduce({}) do |acc, xy|
+      adjs = [-1, 0, 1].repeated_permutation(2).map { |d| xy.zip(d).map(&:sum) }
+
+      acc.merge(xy => adjs.filter_map { |pos| number_map[pos] }.uniq)
+    end
+
+    part_numbers = symbol_numbers.values.flatten(1).uniq
+
+    part_numbers.sum do |xy|
+      digit_positions = number_map.select { |k, v| v == xy }.keys
+      digit_positions.map { |xy| data[xy] }.join.to_i
+    end
   end
 end
 
