@@ -1,5 +1,5 @@
 def input
-  File.read(ARGV[0] || './input.txt')
+  File.read('./inputs/01.txt')
 end
 
 def data
@@ -8,8 +8,13 @@ def data
     .transpose
 end
 
-def result(data)
+def part_1
   data.map(&:sort).transpose.sum { |d| (d[0] - d[1]).abs }
 end
 
-puts result(data)
+def part_2
+  data[0].sum { |d| d * data[1].count(d) }
+end
+
+puts "Part 1: #{part_1}"
+puts "Part 2: #{part_2}"
